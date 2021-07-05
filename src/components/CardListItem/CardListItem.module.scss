@@ -1,0 +1,11 @@
+.card {
+  &:hover {
+    &  .box {
+      display: block !important;
+    }
+  }
+}
+
+.box {
+  display: none !important;
+}
