@@ -13,6 +13,8 @@ import history from "./history";
 const store = createStore(rootReducer, compose(applyMiddleware(
     thunk
 ), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()))
+const data = JSON.parse(localStorage.getItem('favorite'))
+localStorage.setItem('favorite', JSON.stringify(data || []))
 
 const app = (
   <Provider store={store}>
