@@ -4,8 +4,10 @@ import {useSelector} from 'react-redux';
 
 function CardInfoPage() {
     const countries = useSelector(state => state.card.country)
+    const favorite = useSelector(state=>state.card.favoriteCountry)
+    const all = countries.concat(favorite)
     const {code} = useParams();
-    const oneCountry = countries.find(item => item.name === code.slice(1)) || JSON.parse(localStorage.getItem("onecountry"))
+    const oneCountry = all.find(item => item.name === code.slice(1)) || JSON.parse(localStorage.getItem("onecountry"))
     localStorage.setItem("onecountry", JSON.stringify(oneCountry));
 
 
