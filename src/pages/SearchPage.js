@@ -3,60 +3,51 @@ import {useState, useRef, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {CircularProgress} from '@material-ui/core';
 import CardList from '../components/CardList';
-import styled from 'styled-components';
 import {fetchCountry} from "../redux/actions";
-
-
-const DivMain = styled.div`
-height: 100%;
-width: 100%;
-margin: 5px 5px 5px 5px;
-display: flex;
-align-items: center;
-flex-direction: row;
-flex-wrap: wrap;
-`
-const Form = styled.form`
-width: 95vw;
-`
+import {DivMain} from "../components/StyledComponent/DivMain";
+import {Form} from "../components/StyledComponent/Form";
+import {useHistory} from "react-router-dom";
 
 
 function SearchPage() {
-    const [input, setInput] = useState('');
-    const dispatch = useDispatch();
+    const [input, setInput] = useState('')
+    const dispatch = useDispatch()
     const loading = useSelector(state => state.app.loading)
-    const inputRef = useRef(null);
+    const history = useHistory()
+    const inputRef = useRef(null)
+    const searchParams = new URLSearchParams(history.location.search)
+    const item = searchParams.get('text')
 
     useEffect(() => {
         inputRef.current.focus();
     });
 
+
     const handleChange = e => {
         e.preventDefault()
-        setInput(e.target.value);
+        setInput(e.target.value)
     };
 
     const handleRefresh = e => {
         e.preventDefault()
-        setInput('');
+        setInput('')
     };
 
-    useEffect(() => dispatch(fetchCountry(input)), [input]);
+    useEffect(() => dispatch(fetchCountry(input || item, false)), [input]);
 
     return (
         <DivMain>
             <Form>
-                <>
-                    <input
-                        placeholder='type country'
-                        value={input}
-                        onChange={handleChange}
-                        name='text'
-                        ref={inputRef}/>
-                    <button onClick={handleRefresh}>
-                        Reset
-                    </button>
-                </>
+                <input
+                    placeholder='type country'
+                    value={input}
+                    onChange={handleChange}
+                    name='text'
+                    ref={inputRef}/>
+                <input type="submit" value="Submit"/>
+                <button onClick={handleRefresh}>
+                    Reset
+                </button>
             </Form>
             {
                 loading ? <CircularProgress/> : <CardList/>

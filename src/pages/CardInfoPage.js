@@ -1,28 +1,38 @@
 import React from 'react';
-import {useParams} from "react-router-dom";
-import {useSelector} from 'react-redux';
+import {useParams, useHistory} from 'react-router-dom';
+import {useSelector, useDispatch} from 'react-redux';
+import {fetchCountry} from "../redux/actions";
+import {CircularProgress} from '@material-ui/core';
 
 function CardInfoPage() {
+    const dispatch = useDispatch()
+    const history = useHistory()
+    const {code} = useParams()
+    const searchParams = new URLSearchParams(history.location.search)
+    const item = searchParams.get('country')
+    const isFavorite = searchParams.get('isFavorite')
+    const isTrue = isFavorite === "true";
     const countries = useSelector(state => state.card.country)
-    const favorite = useSelector(state=>state.card.favoriteCountry)
-    const all = countries.concat(favorite)
-    const {code} = useParams();
-    const oneCountry = all.find(item => item.name === code.slice(1)) || JSON.parse(localStorage.getItem("onecountry"))
-    localStorage.setItem("onecountry", JSON.stringify(oneCountry));
+    if (countries.length === 0){
+        dispatch(fetchCountry(item, isTrue))
+    }
+    const oneCountry = countries.find(item => item.name === code.slice(1)) || countries[0]
 
-
-    return (
-        <div>
-            <h1>{oneCountry.name}</h1>
-            <p>Alt spelling:</p>
-            {oneCountry.altSpellings.length ? oneCountry.altSpellings.map((spelling, index) => {
-                return <li key={index}>{spelling}</li>
-            }) : <p>none</p>}
-            <p>Borders:</p>
-            {oneCountry.borders.length ? oneCountry.borders.map((border, index) => {
-                return <li key={index}>{border}</li>
-            }) : <p>none</p>}
-        </div>
+    return (<>{
+        countries.length === 0 ? <CircularProgress/> :
+            <div>
+                <h1>{oneCountry.name} {oneCountry.isFavorite ? "Pinned" : ''}</h1>
+                <p>Alt spelling:</p>
+                {oneCountry.altSpellings.length ? oneCountry.altSpellings.map((spelling, index) => {
+                    return <li key={index}>{spelling}</li>
+                }) : <p>none</p>}
+                <p>Borders:</p>
+                {oneCountry.borders.length ? oneCountry.borders.map((border, index) => {
+                    return <li key={index}>{border}</li>
+                }) : <p>none</p>}
+            </div>
+    }
+        </>
     )
 }
 

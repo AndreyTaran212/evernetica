@@ -1,63 +1,34 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import styles from './CardListItem.module.scss'
-import {NavLink} from "react-router-dom";
+import {NavLink} from 'react-router-dom';
 import {Button, Card, Checkbox} from '@material-ui/core';
-import styled from "styled-components";
 import {useDispatch} from 'react-redux';
-import {addToFavorite, deleteCountry, removeFavorite} from "../../redux/actions";
-import removeByAttr from "../../utils/utils";
-
-const Div = styled.div`
-height: 110px;
-width: 210px;
-margin: 5px 10px 5px 10px;
-`
-const SmallDiv = styled.div`
-display: flex;
-flex-direction: row;
-justify-content: space-between;
-`
-
-const Container = styled.div`
-margin: 7px;
-`
+import {addToFavorite, deleteCountry} from '../../redux/actions';
+import {Div} from '../StyledComponent/Div';
+import {Container} from '../StyledComponent/Container';
+import {SmallDiv} from '../StyledComponent/SmallDiv';
 
 function CardListItem({country, index}) {
-    const [isFavorite, setIsFavorite] = useState(false)
-    country.isFavorite = isFavorite
-
-    let data = JSON.parse(localStorage.getItem('favorite'))
-
-    useEffect(() => {
-        if (isFavorite) {
-            data.push(country)
-            localStorage.setItem('favorite', JSON.stringify(data))
-        } else {
-            removeByAttr(data, "name", country.name)
-            localStorage.setItem('favorite', JSON.stringify(data))
-        }
-    }, [isFavorite])
-
+    const [isFavorite, setIsFavorite] = useState(country.isFavorite)
     const dispatch = useDispatch();
 
+
     const handleClick = useCallback(() => {
-        setIsFavorite(false)
-        country.isFavorite = isFavorite
         dispatch(deleteCountry(index))
-    }, [index, dispatch, deleteCountry, setIsFavorite])
+    }, [index, dispatch])
 
     const handleChange = useCallback(() => {
-        country.isFavorite = setIsFavorite((isFavorite)=>!isFavorite)
-        if (!isFavorite) {
-            dispatch(addToFavorite(country))
-            dispatch(deleteCountry(index))
-        }else {dispatch(removeFavorite(index))}
-    }, [index, dispatch, addToFavorite, isFavorite, removeFavorite, ])
+        country.isFavorite = !isFavorite
+        setIsFavorite(!isFavorite)
+        dispatch(addToFavorite(country))
+        dispatch(deleteCountry(index))
+
+    }, [dispatch, country, isFavorite, index])
 
     return (
         <Div className={styles.card}>
             <Card>
-                <NavLink to={`/infopage/:${country.name}`}>
+                <NavLink to={`/infopage/:${country.name}?country=${country.name}&isFavorite=${country.isFavorite}`}>
                     <Container>
                         {country.name}
                     </Container>
@@ -69,7 +40,7 @@ function CardListItem({country, index}) {
                     <Button variant="contained" color="secondary" onClick={handleClick} style={{cursor: 'pointer'}}>
                         Delete
                     </Button>
-                    <Checkbox onChange={handleChange}/>
+                    <Checkbox onChange={handleChange} checked={country.isFavorite}/>
                 </SmallDiv>
             </Card>
         </Div>
