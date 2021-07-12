@@ -8,10 +8,8 @@ import thunk from 'redux-thunk';
 import { createStore, compose, applyMiddleware } from 'redux';
 import { rootReducer } from './redux/rootReducer';
 import { BrowserRouter as Router } from 'react-router-dom';
-import {createBrowserHistory} from 'history'
+import history from './history'
 
-
-const history = createBrowserHistory()
 const store = createStore(rootReducer, compose(applyMiddleware(
     thunk
 ), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()))

@@ -4,6 +4,7 @@ import {useSelector} from 'react-redux';
 import FavoriteItem from "./FavoriteItem/FavoriteItem";
 
 function CardList() {
+
     const countries = useSelector(state => state.card.country)
     const favoriteCountry = useSelector(state => state.card.favoriteCountry)
 

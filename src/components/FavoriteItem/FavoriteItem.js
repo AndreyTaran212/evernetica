@@ -7,9 +7,17 @@ import {removeFavorite} from '../../redux/actions';
 import {Div} from '../StyledComponent/Div';
 import {Container} from '../StyledComponent/Container';
 import {SmallDiv} from '../StyledComponent/SmallDiv';
+import {useSelector} from 'react-redux';
+import history from "../../history";
 
 function FavoriteItem({country, index}) {
+    const searchParams = new URLSearchParams(history.location.search)
     const dispatch = useDispatch();
+    const favoriteCountry = useSelector(state => state.card.favoriteCountry)
+    const result = favoriteCountry.map(obj => obj.alpha2Code)
+    searchParams.set('favorite', result)
+    history.push('/search?' + searchParams.toString())
+    console.log(searchParams.get('favorite'))
 
     const handleClick = useCallback(() => {
         dispatch(removeFavorite(index))

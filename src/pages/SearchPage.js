@@ -3,25 +3,23 @@ import {useState, useRef, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {CircularProgress} from '@material-ui/core';
 import CardList from '../components/CardList';
-import {fetchCountry} from "../redux/actions";
+import {fetchCountry, fetchFavorite} from "../redux/actions";
 import {DivMain} from "../components/StyledComponent/DivMain";
 import {Form} from "../components/StyledComponent/Form";
-import {useHistory} from "react-router-dom";
+import history from "../history";
 
 
 function SearchPage() {
     const [input, setInput] = useState('')
     const dispatch = useDispatch()
     const loading = useSelector(state => state.app.loading)
-    const history = useHistory()
     const inputRef = useRef(null)
     const searchParams = new URLSearchParams(history.location.search)
-    const item = searchParams.get('text')
+    const item = searchParams.get('text') || ''
 
     useEffect(() => {
         inputRef.current.focus();
     });
-
 
     const handleChange = e => {
         e.preventDefault()
@@ -33,7 +31,10 @@ function SearchPage() {
         setInput('')
     };
 
-    useEffect(() => dispatch(fetchCountry(input || item, false)), [input]);
+    useEffect(() => dispatch(fetchCountry(input || item, false)), [input])
+    useEffect(() => {
+        dispatch(fetchFavorite(searchParams.get('favorite')))
+    }, [])
 
     return (
         <DivMain>

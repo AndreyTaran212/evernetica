@@ -4,7 +4,7 @@ import {
     SHOW_LOADER,
     DELETE_COUNTRY,
     ADD_TO_FAVORITE,
-    REMOVE_FAVORITE
+    REMOVE_FAVORITE, DOWNLOAD_FAVORITE
 } from './types';
 
 export function fetchCountry(name, status) {
@@ -17,12 +17,31 @@ export function fetchCountry(name, status) {
             dispatch({type: FETCH_COUNTRY, payload: json})
             dispatch(hideLoader())
         }
-
     }
     return dispatch => {
         dispatch({type: FETCH_COUNTRY, payload: []})
     }
 }
+
+export function fetchFavorite(code) {
+
+    if (code !== null) {
+        const res = code.replace(/,/g, ";" ).toLowerCase()
+        console.log(res, 'result')
+        return async dispatch => {
+            dispatch(showLoader())
+            const response = await fetch(`https://restcountries.eu/rest/v2/alpha?codes=${res}`)
+            const json = await response.json()
+            json.map((country, index) => country.isFavorite = true)
+            dispatch({type: DOWNLOAD_FAVORITE, payload: json})
+            dispatch(hideLoader())
+        }
+    }
+    return dispatch => {
+        dispatch({type: FETCH_COUNTRY, payload: []})
+    }
+}
+
 
 export function showLoader() {
     return {
